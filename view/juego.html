@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juego Educativo - Animales</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .score-timer {
+      display: flex;
+      justify-content: space-between;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      font-size: 18px;
+    }
+
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .image-box img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .options-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .option {
+      background-color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      cursor: grab;
+      user-select: none;
+      font-weight: bold;
+    }
+
+    .drop-zone {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 300px;
+      height: 100px;
+      border: 2px dashed #888;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+    }
+
+    .correct {
+      background-color: #d4edda;
+      border: 2px solid green;
+    }
+
+    .incorrect {
+      background-color: #f8d7da;
+      border: 2px solid red;
+    }
+
+    .next-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 6px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .options-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>¿Qué animal es este?</h1>
+  <div class="score-timer">
+    <div>Puntos: <span id="score">0</span></div>
+    <div>Tiempo: <span id="timer">10</span>s</div>
+  </div>
+
+  <div class="game-container">
+    <div class="image-box">
+      <img id="animalImage" src="" alt="animal" />
+    </div>
+
+    <div class="options-container" id="optionsContainer">
+      <!-- Opciones aquí -->
+    </div>
+
+    <div class="drop-zone" id="dropZone">Arrastra la respuesta aquí</div>
+    <button class="next-btn" id="nextBtn">Siguiente</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Lion_waiting_in_Namibia.jpg/640px-Lion_waiting_in_Namibia.jpg",
+        correct: "León",
+        options: ["Perro", "León", "Gato"]
+      },
+      {
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Golde33443.jpg/640px-Golde33443.jpg",
+        correct: "Perro",
+        options: ["Gato", "León", "Perro"]
+      },
+      {
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/81_INF_DIV_Scout_Dog.jpg/640px-81_INF_DIV_Scout_Dog.jpg",
+        correct: "Gato",
+        options: ["Caballo", "Elefante", "Gato"]
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let draggedOption = null;
+    let timer;
+    let timeLeft = 10;
+
+    const image = document.getElementById("animalImage");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const dropZone = document.getElementById("dropZone");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function loadQuestion() {
+      const question = questions[currentIndex];
+      image.src = question.img;
+      dropZone.textContent = "Arrastra la respuesta aquí";
+      dropZone.className = "drop-zone";
+      optionsContainer.innerHTML = "";
+      question.options.forEach(optionText => {
+        const div = document.createElement("div");
+        div.textContent = optionText;
+        div.classList.add("option");
+        div.setAttribute("draggable", true);
+        div.addEventListener("dragstart", () => {
+          draggedOption = div;
+        });
+        optionsContainer.appendChild(div);
+      });
+
+      startTimer();
+      nextBtn.style.display = "none";
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 10;
+      timerDisplay.textContent = timeLeft;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          dropZone.textContent = "¡Tiempo agotado!";
+          dropZone.classList.add("incorrect");
+          nextBtn.style.display = "block";
+        }
+      }, 1000);
+    }
+
+    dropZone.addEventListener("dragover", e => e.preventDefault());
+
+    dropZone.addEventListener("drop", () => {
+      if (!draggedOption) return;
+
+      const selected = draggedOption.textContent;
+      const correct = questions[currentIndex].correct;
+
+      if (selected === correct) {
+        score++;
+        dropZone.textContent = "¡Correcto!";
+        dropZone.classList.add("correct");
+      } else {
+        dropZone.textContent = "Incorrecto. Era: " + correct;
+        dropZone.classList.add("incorrect");
+      }
+
+      scoreDisplay.textContent = score;
+      nextBtn.style.display = "block";
+      clearInterval(timer);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        loadQuestion();
+      } else {
+        image.style.display = "none";
+        optionsContainer.style.display = "none";
+        dropZone.style.display = "none";
+        nextBtn.style.display = "none";
+        document.querySelector("h1").textContent = "Juego Terminado 🎉";
+        document.querySelector(".score-timer").innerHTML = `Tu puntaje final fue: <strong>${score}</strong>`;
+      }
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>
