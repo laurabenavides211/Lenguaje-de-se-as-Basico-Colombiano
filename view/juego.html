@@ -32,7 +32,7 @@
     }
 
     .image-box img {
-      max-width: 100%;
+      max-width: 20%;
       height: auto;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
@@ -88,6 +88,11 @@
       border-radius: 6px;
       display: none;
     }
+    .boton{
+      border-radius: 5px;
+      border: 2px solid black;
+      width: 60px;
+    }
 
     @media (max-width: 600px) {
       .options-container {
@@ -98,6 +103,7 @@
   </style>
 </head>
 <body>
+  <div class="boton"><a href="abecedario.html">Atras</a></div>
 
   <h1>¿Qué animal es este?</h1>
   <div class="score-timer">
@@ -118,22 +124,33 @@
     <button class="next-btn" id="nextBtn">Siguiente</button>
   </div>
 
+
   <script>
     const questions = [
       {
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Lion_waiting_in_Namibia.jpg/640px-Lion_waiting_in_Namibia.jpg",
-        correct: "León",
-        options: ["Perro", "León", "Gato"]
+        img: "../img/abcdario/e.jpg",
+        correct: "E",
+        options: ["E", "A", "G"]
       },
       {
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Golde33443.jpg/640px-Golde33443.jpg",
-        correct: "Perro",
-        options: ["Gato", "León", "Perro"]
+        img: "../img/abcdario/z.jpg",
+        correct: "Z",
+        options: ["S", "J", "Z"]
       },
       {
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/81_INF_DIV_Scout_Dog.jpg/640px-81_INF_DIV_Scout_Dog.jpg",
-        correct: "Gato",
-        options: ["Caballo", "Elefante", "Gato"]
+        img: "../img/abcdario/ñ.jpg",
+        correct: "Ñ",
+        options: ["Ñ", "N", "M"]
+      },
+      {
+        img: "../img/abcdario/q.jpg",
+        correct: "Q",
+        options: ["O", "Q", "D"]
+      },
+      {
+        img: "../img/abcdario/x.jpg",
+        correct: "X",
+        options: ["P", "G", "X"]
       }
     ];
 
